@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from starlette.responses import StreamingResponse
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -22,8 +24,7 @@ def query(message:str):
 
     print(response.data[0].embedding)
 
-@app.post("/chat")
-def query(message: str):
+def upstage_chat(message):
     from openai import OpenAI  # openai==1.52.2
 
     client = OpenAI(
@@ -38,9 +39,21 @@ def query(message: str):
                 "content": message
             }
         ],
-        stream=False,
+        stream=True,
     )
-    return stream.choices[0].message.content
 
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            yield chunk.choices[0].delta.content
+
+class ChatRequest(BaseModel):
+    prompt: str
+
+@app.post("/chat")
+def query(message: ChatRequest):
+    return StreamingResponse(
+        upstage_chat(message.prompt),
+        media_type="text/plain; charset=utf-8"
+    )
     # Use with stream=False
     # print(stream.choices[0].message.content)
