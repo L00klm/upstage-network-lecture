@@ -1,25 +1,11 @@
-from datetime import datetime
-
 from fastapi import APIRouter
 from fastapi import Depends
-from pydantic import BaseModel
 
 from app.deps import get_user_service
+from app.models.schemas import UserCreateRequest, UserResponse
 
 # create user
 router = APIRouter(prefix="/users", tags=["users"])
-
-
-class UserCreateRequest(BaseModel):
-    name: str
-    email: str
-
-
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: str
-    created_at: str
 
 
 @router.post("/", response_model=UserResponse)

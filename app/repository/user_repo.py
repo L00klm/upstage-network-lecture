@@ -1,14 +1,7 @@
 from typing import Dict, List, Optional
 from datetime import datetime
-from dataclasses import dataclass
 
-
-@dataclass
-class User:
-    id: int
-    name: str
-    email: str
-    created_at: datetime
+from app.models.entities import User
 
 
 class UserRepository:
