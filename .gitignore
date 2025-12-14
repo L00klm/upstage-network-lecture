@@ -166,3 +166,4 @@ cython_debug/
 # for lecture
 uv.lock
 
+infra/**data/**

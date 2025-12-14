@@ -1,3 +1,4 @@
+import logging
 import os
 import chromadb
 from typing import Optional
@@ -5,13 +6,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
+logger = logging.getLogger("chroma")
 class ChromaDBConfig:
     def __init__(self):
         self.host = os.getenv("CHROMA_HOST", "localhost")
         self.port = int(os.getenv("CHROMA_PORT", "8800"))
         self.collection_name = os.getenv("CHROMA_COLLECTION_NAME", "upstage_embeddings")
-
+        logger.info(self.host, self.port, self.collection_name)
 
 class ChromaDBConnection:
     _instance: Optional['ChromaDBConnection'] = None
