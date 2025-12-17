@@ -20,3 +20,19 @@ async def create_user_api(
         email=user.get('email'),
         created_at=user.get('created_at')
     )
+
+
+@router.get("/", response_model=UserResponse)
+async def get_user_api(
+        user_id: int,
+        user_service=Depends(get_user_service)
+):
+    user = user_service.get_user(
+        user_id=user_id
+    )
+    return UserResponse(
+        id=user.get('id'),
+        name=user.get('name'),
+        email=user.get('email'),
+        created_at=user.get('created_at')
+    )

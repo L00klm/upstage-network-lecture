@@ -1,39 +1,47 @@
-from typing import Dict, List, Optional
-from datetime import datetime
-
-from app.models.entities import User
-
+from sqlalchemy.orm import Session
+from app.models.entities.users import User
 
 class UserRepository:
-    def __init__(self):
-        self._users_memory_db: Dict[int, User] = {}
-        self._next_id = 1
+    def __init__(self, db: Session):
+        self.db = db
 
-    def save(self, name: str, email: str) -> User:
-        user = User(
-            id=self._next_id,
-            name=name,
-            email=email,
-            created_at=datetime.now()
-        )
-        self._users_memory_db[self._next_id] = user
-        self._next_id += 1
-        return user
+    def create_user(self, name: str, email: str):
+        try:
+            user = User(name=name, email=email)
+            self.db.add(user)
+            self.db.commit()
+            self.db.refresh(user)
+            return user
+        except Exception:
+            self.db.rollback()
+            raise
 
-    def find_by_id(self, user_id: int) -> Optional[User]:
-        return self._users_memory_db.get(user_id)
+    def get_user_by_id(self, id: int):
+        return self.db.query(User).filter(User.id == id).first()
 
-    def find_by_email(self, email: str) -> Optional[User]:
-        for user in self._users_memory_db.values():
-            if user.email == email:
-                return user
-        return None
+    def get_user_by_email(self, email: str):
+        return self.db.query(User).filter(User.email == email).first()
 
-    def find_all(self) -> List[User]:
-        return list(self._users_memory_db.values())
+    def update_user_name(self, user_id: int, new_name: str):
+        try:
+            user = self.db.query(User).filter(User.id == user_id).first()
+            if not user:
+                return None
+            user.name = new_name
+            self.db.commit()
+            return user
+        except Exception:
+            self.db.rollback()
+            raise
 
-    def delete(self, user_id: int) -> bool:
-        if user_id in self._users_memory_db:
-            del self._users_memory_db[user_id]
-            return True
-        return False
+    def delete_user_by_email(self, email: str):
+        try:
+            user = self.db.query(User).filter(User.email == email).first()
+            if not user:
+                return None
+            self.db.delete(user)
+            self.db.commit()
+            return user
+        except Exception:
+            self.db.rollback()
+            raise
