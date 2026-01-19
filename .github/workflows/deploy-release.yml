@@ -20,7 +20,7 @@ jobs:
           script: |
             BRANCH="${{ github.ref_name }}"
             echo "Deploying branch: $BRANCH"
-            cd C/Users/bestx/Documents/workspace/upstage-network-lecture
+            cd /home/ubuntu/workspace/deploy/upstage-network-lecture
             # C:\Users\bestx\Documents\workspace\upstage-network-lecture
             # /home/ubuntu/workspace/deploy/upstage-network-lecture
             
