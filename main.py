@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from app.api.route.user_routers import router as user_router
 from app.exceptions import UserNotFoundError, EmailNotAllowedNameExistsError
 
+# app
 app = FastAPI()
 
 
